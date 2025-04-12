@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Me Perdoa?</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ffe0e9, #c2e9fb);
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
+      animation: floatIn 1s ease-out;
+      position: relative;
+      z-index: 2;
+      transition: box-shadow 0.5s ease;
+    }
+
+    .card.perdoado {
+      box-shadow: 0 0 40px rgba(255, 105, 180, 0.7);
+      animation: pulse 1s ease-in-out 1;
+    }
+
+    h1 {
+      color: #e74c3c;
+      font-size: 2.5em;
+    }
+
+    p {
+      font-size: 1.2em;
+      color: #555;
+    }
+
+    .btns {
+      margin-top: 25px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .yes {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .no {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .hug {
+      background-color: #3498db;
+      color: white;
+      display: none;
+    }
+
+    .letter-btn {
+      background-color: #f39c12;
+      color: white;
+      display: none;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    #response {
+      margin-top: 20px;
+      font-size: 1.3em;
+      color: #333;
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* Corações caindo */
+    .heart {
+      position: absolute;
+      top: -50px;
+      width: 30px;
+      height: 30px;
+      background: url('https://cdn-icons-png.flaticon.com/512/833/833472.png') no-repeat center;
+      background-size: contain;
+      animation: fall 5s linear infinite;
+      z-index: 1;
+      opacity: 0.7;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(120vh);
+        opacity: 0;
+      }
+    }
+
+    /* Coração animado após perdão */
+    .big-heart {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-size: 80px;
+      opacity: 0;
+      animation: popHeart 1s forwards;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    @keyframes popHeart {
+      0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+      }
+    }
+
+    /* Estilo da cartinha */
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff6f6;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      display: none;
+      z-index: 99;
+    }
+
+    .popup h2 {
+      margin-bottom: 15px;
+      color: #e74c3c;
+    }
+
+    .popup p {
+      font-size: 1.1em;
+      color: #555;
+    }
+
+    .close-popup {
+      margin-top: 15px;
+      background: #e74c3c;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="card" id="mainCard">
+    <h1>Me desculpa? 😔</h1>
+    <p>Eu sei que errei e tô aqui com o coração apertado... <br>
+    Você é muito importante pra mim, minha pretinha, e eu não quero te perder.<br>
+    Eu te amo muito, minha princesa 💖</p>
+
+    <div class="btns">
+      <button class="yes" onclick="responder(true)">Sim, eu te perdoo 💖</button>
+      <button class="no" id="btn-no" onclick="responder(false)">Ainda não... 😢</button>
+      <button class="hug" onclick="darAbraco()">Quero te dar um abraço 🫂</button>
+      <button class="letter-btn" onclick="abrirCartinha()">Abrir uma cartinha 💌</button>
+    </div>
+
+    <div id="response"></div>
+  </div>
+
+  <!-- Coração grande que aparece -->
+  <div class="big-heart" id="bigHeart">💖</div>
+
+  <!-- Cartinha pop-up -->
+  <div class="popup" id="cartinha">
+    <h2>Minha pretinha 💌</h2>
+    <p>Obrigado por me perdoar. Eu quero que você saiba que cada momento com você é especial. Mesmo quando a gente briga, meu amor por você continua firme e forte. Vamos ficar logo de bem? 💖</p>
+    <button class="close-popup" onclick="fecharCartinha()">Fechar</button>
+  </div>
+
+  <!-- Corações animados -->
+  <script>
+    function responder(perdoa) {
+      const resposta = document.getElementById('response');
+      const hugBtn = document.querySelector('.hug');
+      const letterBtn = document.querySelector('.letter-btn');
+      const btnNo = document.getElementById('btn-no');
+      const card = document.getElementById('mainCard');
+      const heart = document.getElementById('bigHeart');
+
+      if (perdoa) {
+        resposta.innerHTML = "😭 Obrigado, minha pretinha! Prometo fazer melhor. ❤️";
+        hugBtn.style.display = "inline-block";
+        letterBtn.style.display = "inline-block";
+        btnNo.style.display = "none";
+
+        // Animação especial
+        card.classList.add("perdoado");
+        heart.style.animation = 'popHeart 1s forwards';
+      } else {
+        resposta.innerHTML = "Tudo bem, minha pretinha... Eu entendo que ainda tá magoada. Mas tô aqui, com o coração aberto, esperando a hora certa pra gente ficar bem de novo. 💗";
+      }
+    }
+
+    function darAbraco() {
+      alert("🤗 Imagina um abraço bem apertado meu aí agora... Te amo, minha pretinha!");
+    }
+
+    function abrirCartinha() {
+      document.getElementById('cartinha').style.display = 'block';
+    }
+
+    function fecharCartinha() {
+      document.getElementById('cartinha').style.display = 'none';
+    }
+
+    // Corações caindo
+    setInterval(() => {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 5000);
+    }, 300);
+  </script>
+</body>
+</html>
